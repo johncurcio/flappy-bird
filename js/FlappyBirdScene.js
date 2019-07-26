@@ -77,7 +77,7 @@ class FlappyBirdScene extends Phaser.Scene {
 		// ground 
 		this.ground = this.physics.add.sprite(assets.scene.width, 458, assets.scene.ground);
 		this.ground.setCollideWorldBounds(true);
-		this.ground.setDepth(10);
+		this.ground.setDepth(20);
 
 		this.anims.create({ key: assets.animation.ground.moving, 
 			frames: this.anims.generateFrameNumbers(assets.scene.ground, {
@@ -157,7 +157,7 @@ class FlappyBirdScene extends Phaser.Scene {
 		}, this);
 
 		this.physics.add.collider(this.flappyBird, this.ground, this.hitBird, null, this);
-		this.physics.add.collider(this.flappyBird, this.pipes, this.hitBird, null, this);
+		this.physics.add.overlap(this.flappyBird, this.pipes, this.hitBird, null, this);
 		this.physics.add.overlap(this.flappyBird, this.gaps, this.updateScore, null, this);
 		this.ground.anims.play( assets.animation.ground.moving, true );
 	}
@@ -169,13 +169,18 @@ class FlappyBirdScene extends Phaser.Scene {
 	}
 
 	hitBird(){
+		// stop the pipes
+		this.pipes.children.iterate(function(pipe){
+			if (pipe == undefined) return;
+			pipe.setVelocityX(0);
+		});
+
 		this.isGameOver = true;
 		this.hasGameStarted = false;
 		this.flappyBird.die();
 		this.ground.anims.stop(assets.animation.ground.moving, true);
 		this.gameOver.visible = true;
 		this.restart.visible = true;
-		this.physics.pause();
 	}
 
 	restartGame(scene){
@@ -186,7 +191,6 @@ class FlappyBirdScene extends Phaser.Scene {
 		scene.gameOver.visible = false;
 		scene.restart.visible = false;
 		scene.initGame();
-		scene.physics.resume();
 	}
 
 	updateScore(_, gap){
@@ -237,10 +241,10 @@ class FlappyBirdScene extends Phaser.Scene {
 		gap.body.allowGravity = false;
 		gap.visible = false;
 
-		const pipeTop = this.pipes.create(288, top, this.currentPipe.top);
+		const pipeTop = this.pipes.create(288, top, this.currentPipe.top).setImmovable(true);
 		pipeTop.body.allowGravity = false;
 
-		const pipeBottom = this.pipes.create(288, top + 420, this.currentPipe.bottom);
+		const pipeBottom = this.pipes.create(288, top + 420, this.currentPipe.bottom).setImmovable(true);
 		pipeBottom.body.allowGravity = false;			
 	}
 }
