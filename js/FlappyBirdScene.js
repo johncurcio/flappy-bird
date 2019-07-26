@@ -117,7 +117,7 @@ class FlappyBirdScene extends Phaser.Scene {
 		if (this.isGameOver) return;
 		if (!this.hasGameStarted) return;
 
-		this.flappyBird.flapUp();
+		this.flappyBird.falls();
 
 		this.pipes.children.iterate(function(pipe){
 			if (pipe == undefined) return;
@@ -169,11 +169,11 @@ class FlappyBirdScene extends Phaser.Scene {
 	}
 
 	hitBird(){
+		this.physics.pause();
 		this.isGameOver = true;
 		this.hasGameStarted = false;
-		this.physics.pause();
 		this.flappyBird.die();
-		this.ground.anims.play(assets.animation.ground.stop);
+		this.ground.anims.stop(assets.animation.ground.moving, true);
 		this.gameOver.visible = true;
 		this.restart.visible = true;
 	}

@@ -11,26 +11,33 @@ class FlappyBird extends Phaser.GameObjects.Sprite {
 		// start still and wait until needed
 		this.body.setVelocity(0, 0).setBounce(0, 0).setCollideWorldBounds(false);
 		this.body.allowGravity = false;
-
 		this.upwardsVelocity = 0;
+		this.angle = -15;
 	}
 
 	flap(){
 		this.body.setVelocityY(-400);
-		this.body.angle = -15;
-		this.upwardsVelocity = 5;
+		this.setAngle(-15);
+		this.angle = -15;
+		this.upwardsVelocity = 6;
 	}
 
-	flapUp(){
+	falls(){
 		if (this.upwardsVelocity > 0){
 			this.upwardsVelocity--;
 		} else {
-			this.body.setVelocityY(120);
-			if (this.body.angle < 90) this.body.angle++;
+			this.body.setVelocityY(200);
+			if (this.angle < 90){
+				this.angle += 2;
+				this.setAngle(this.angle);
+			}				
 		}
 	}
 
 	die(){
+		this.setAngle(90);
+		this.setDepth(100); // bring it to the front of everything
+		this.setPosition(60, 380);
 		this.anims.play(this.bird.stop);
 	}
 
