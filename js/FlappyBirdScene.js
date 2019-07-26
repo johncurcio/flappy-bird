@@ -75,9 +75,11 @@ class FlappyBirdScene extends Phaser.Scene {
 		});
 
 		// ground 
-		this.ground = this.physics.add.sprite(assets.scene.width, 458, assets.scene.ground);
+		this.ground = this.physics.add.sprite(assets.scene.width, 468, assets.scene.ground);
 		this.ground.setCollideWorldBounds(true);
 		this.ground.setDepth(20);
+		// ajust collision box for the ground
+		this.ground.setSize(0, 100, 0, 0).setOffset(0, 10);
 
 		this.anims.create({ key: assets.animation.ground.moving, 
 			frames: this.anims.generateFrameNumbers(assets.scene.ground, {
