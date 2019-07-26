@@ -16,22 +16,23 @@ class FlappyBird extends Phaser.GameObjects.Sprite {
 	}
 
 	flap(){
-		this.body.setVelocityY(-400);
+		this.body.setVelocityY(-300);
 		this.setAngle(-15);
 		this.angle = -15;
-		this.upwardsVelocity = 6;
+		this.upwardsVelocity = 30;
 	}
 
 	falls(){
 		if (this.upwardsVelocity > 0){
 			this.upwardsVelocity--;
-		} else {
-			this.body.setVelocityY(200);
-			if (this.angle < 90){
-				this.angle += 2;
-				this.setAngle(this.angle);
-			}				
-		}
+		}else{
+		if (this.angle < 90){
+			this.angle += 3;
+			this.setAngle(this.angle);
+		}}
+		this.body.allowGravity = true;
+		this.body.gravity.y = 250;
+
 	}
 
 	die(){

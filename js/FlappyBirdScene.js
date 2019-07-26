@@ -169,13 +169,13 @@ class FlappyBirdScene extends Phaser.Scene {
 	}
 
 	hitBird(){
-		this.physics.pause();
 		this.isGameOver = true;
 		this.hasGameStarted = false;
 		this.flappyBird.die();
 		this.ground.anims.stop(assets.animation.ground.moving, true);
 		this.gameOver.visible = true;
 		this.restart.visible = true;
+		this.physics.pause();
 	}
 
 	restartGame(scene){
