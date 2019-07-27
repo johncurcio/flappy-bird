@@ -1,1 +1,4 @@
-# flappy-bird
+![flappy bird](_docs/logo.png)
+
+# Demo
+

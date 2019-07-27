@@ -34,10 +34,6 @@ class FlappyBirdScene extends Phaser.Scene {
 			});
 		});
 
-		for (let number = 0; number < 10; number++){
-			this.load.image(assets.scoreboard.base + number, `assets/${number}.png`);
-		}	
-
 	}
 
 	create(){
@@ -50,7 +46,6 @@ class FlappyBirdScene extends Phaser.Scene {
 
 		this.gaps = this.physics.add.group(); // gaps between pipes
 		this.pipes = this.physics.add.group();
-		this.scoreboard = this.physics.add.staticGroup();
 
 		// birds animation 
 		Object.keys(assets.bird).forEach(function(key){
@@ -113,6 +108,28 @@ class FlappyBirdScene extends Phaser.Scene {
 		this.restart.on('pointerdown', () => this.restartGame(this));
 		
 		this.initGame();
+
+		this.scoreTxt = this.add.text(assets.scene.width, 40, 
+			'0', { 
+					fontFamily: 'font1', 
+					fontSize: '38px', 
+					fill: '#fff', 
+					stroke: '#000',
+					strokeThickness: 4,
+					strokeLinecap: 'square',
+					shadow: {
+						offsetX: 2.5,
+						offsetY: 3,
+						color: '#000',
+						blur: 0,
+						stroke: true,
+						fill: true
+					}
+				}
+			);
+		this.scoreTxt.setDepth(30);
+		this.scoreTxt.setOrigin(0.5); //center text
+		this.scoreTxt.alpha = 0;
 	}
 
 	update(time, delta){
@@ -188,10 +205,10 @@ class FlappyBirdScene extends Phaser.Scene {
 	restartGame(scene){
 		scene.pipes.clear(true, true);
 		scene.gaps.clear(true, true);
-		scene.scoreboard.clear(true, true);
 		scene.flappyBird.destroy();
 		scene.gameOver.visible = false;
 		scene.restart.visible = false;
+		this.scoreTxt.setText('0');
 		scene.initGame();
 	}
 
@@ -199,7 +216,7 @@ class FlappyBirdScene extends Phaser.Scene {
 		this.score++;
 		gap.destroy();
 
-		if (this.score % 100 == 0){
+		if (this.score % 10 == 0){
 			this.backgroundDay.visible = !this.backgroundDay.visible;
 			this.backgroundNight.visible = !this.backgroundNight.visible;
 			if (this.currentPipe === assets.obstacle.pipe.green){
@@ -208,28 +225,13 @@ class FlappyBirdScene extends Phaser.Scene {
 				this.currentPipe = assets.obstacle.pipe.green;
 			}
 		}
-		this.updateScoreBoard();
-	}
-
-	updateScoreBoard(scene){
-		this.scoreboard.clear(true, true);
-		let scoreText = this.score.toString();
-		if (scoreText.length > 1){
-			let initialPosition = assets.scene.width - ((scoreText.length * assets.scoreboard.width) / 2);
-			for (let i = 0; i < scoreText.length; i++) {
-					this.scoreboard.create(initialPosition, 30, assets.scoreboard.base + scoreText[i]).setDepth(10);
-					initialPosition += assets.scoreboard.width;
-			}
-		} else {
-      this.scoreboard.create(assets.scene.width, 30, assets.scoreboard.base + this.score).setDepth(10)
-		}
+		this.scoreTxt.setText(this.score);
 	}
 
 	startGame(){
+		this.scoreTxt.alpha = 1;
 		this.hasGameStarted = true;
 		this.start.visible = false;
-		const scoreb = this.scoreboard.create(assets.scene.width, 30, assets.scoreboard.base + assets.scoreboard.number0)
-		scoreb.setDepth(20);
 		this.makePipes();
 	}
 
