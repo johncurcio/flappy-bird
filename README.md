@@ -2,3 +2,4 @@
 
 # Demo
 
+![flappy bird](_docs/demo.gif)
