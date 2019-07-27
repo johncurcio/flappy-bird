@@ -33,7 +33,7 @@ class FlappyBirdScene extends Phaser.Scene {
 				frameHeight: 24
 			});
 		});
-
+		this.load.image(assets.scoreboard.score, 'assets/score.png');
 	}
 
 	create(){
@@ -98,7 +98,7 @@ class FlappyBirdScene extends Phaser.Scene {
 		this.start.setDepth(30);
 		this.start.visible = false;
 
-		this.gameOver = this.add.image(assets.scene.width, 206, assets.scene.gameOver);
+		this.gameOver = this.add.image(assets.scene.width, 100, assets.scene.gameOver);
 		this.gameOver.setDepth(20);
 		this.gameOver.visible = false;
 
@@ -106,8 +106,10 @@ class FlappyBirdScene extends Phaser.Scene {
 		this.restart.setDepth(20);
 		this.restart.visible = false;
 		this.restart.on('pointerdown', () => this.restartGame(this));
-		
-		this.initGame();
+
+		this.scoreboard = this.add.image(assets.scene.width, 200, assets.scoreboard.score);
+		this.scoreboard.scale = 0.5;
+		this.scoreboard.setDepth(30);
 
 		this.scoreTxt = this.add.text(assets.scene.width, 40, 
 			'0', { 
@@ -130,6 +132,32 @@ class FlappyBirdScene extends Phaser.Scene {
 		this.scoreTxt.setDepth(30);
 		this.scoreTxt.setOrigin(0.5); //center text
 		this.scoreTxt.alpha = 0;
+
+		this.scored = this.add.text(assets.scene.width+5, 186, 
+			'0', { 
+					fontFamily: 'font1', 
+					fontSize: '18px', 
+					fill: '#fff', 
+					stroke: '#000',
+					strokeThickness: 3,
+				}
+			);
+		this.scored.setDepth(30);
+		this.scored.setOrigin(0.5);
+
+		this.bestScore = this.add.text(assets.scene.width+5, 225, 
+			'0', { 
+					fontFamily: 'font1', 
+					fontSize: '18px', 
+					fill: '#fff', 
+					stroke: '#000',
+					strokeThickness: 3,
+				}
+			);
+		this.bestScore.setDepth(30);
+		this.bestScore.setOrigin(0.5, 0.5);
+
+		this.initGame();
 	}
 
 	update(time, delta){
@@ -165,6 +193,9 @@ class FlappyBirdScene extends Phaser.Scene {
 
 		this.start.visible = true;
 		this.gameOver.visible = false;
+		this.scoreboard.visible = false;
+		this.scored.visible = false;
+		this.bestScore.visible = false;
 		this.backgroundDay.visible = true;
 		this.backgroundNight.visible = false;
 		this.currentPipe = assets.obstacle.pipe.green;
@@ -187,6 +218,20 @@ class FlappyBirdScene extends Phaser.Scene {
 		this.flappyBird.flap();
 	}
 
+	saveScore(){
+		let bestScore = parseInt(localStorage.getItem('bestScore'));
+		if (bestScore){
+			localStorage.setItem('bestScore', Math.max(this.score, bestScore));
+			this.bestScore.setText(bestScore);
+		} else {
+			localStorage.setItem('bestScore', this.score);
+			this.bestScore.setText(0);
+		}
+		this.scored.setText(this.score);
+		this.scored.visible = true;
+		this.bestScore.visible = true;
+	}
+
 	hitBird(){
 		// stop the pipes
 		this.pipes.children.iterate(function(pipe){
@@ -194,12 +239,15 @@ class FlappyBirdScene extends Phaser.Scene {
 			pipe.setVelocityX(0);
 		});
 
+		this.saveScore();
 		this.isGameOver = true;
+		this.scoreboard.visible = true;
 		this.hasGameStarted = false;
 		this.flappyBird.die();
 		this.ground.anims.stop(assets.animation.ground.moving, true);
 		this.gameOver.visible = true;
 		this.restart.visible = true;
+		this.scoreTxt.setText('');
 	}
 
 	restartGame(scene){
@@ -207,8 +255,9 @@ class FlappyBirdScene extends Phaser.Scene {
 		scene.gaps.clear(true, true);
 		scene.flappyBird.destroy();
 		scene.gameOver.visible = false;
+		scene.scoreboard.visible = false;
 		scene.restart.visible = false;
-		this.scoreTxt.setText('0');
+		scene.scoreTxt.setText('0');
 		scene.initGame();
 	}
 
