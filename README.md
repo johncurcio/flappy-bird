@@ -6,7 +6,7 @@
 
 ## Running
 
-Make sure Node is installed and run on the project root folder:
+Running the game is as simple as:
 
 ```npm start```
 
